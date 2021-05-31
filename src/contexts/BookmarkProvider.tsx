@@ -11,6 +11,7 @@ import { Dispatcher } from '../pages/Auth/auth-types';
 
 type BookmarkContextType = {
   bookmarkedWords: VocabWord[];
+  isLoading: boolean;
   setBookmarkedWords: Dispatcher<VocabWord[]>;
   // eslint-disable-next-line no-unused-vars
   bookmarkWord: (word: VocabWord) => Promise<boolean>;
@@ -26,6 +27,7 @@ type BookmarkProviderProps = {
 
 export const BookmarkProvider = ({ children }: BookmarkProviderProps): ReactElement => {
   const [bookmarkedWords, setBookmarkedWords] = useState<VocabWord[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { token } = useAuth();
   const toast = useToast();
 
@@ -40,27 +42,32 @@ export const BookmarkProvider = ({ children }: BookmarkProviderProps): ReactElem
   };
 
   async function bookmarkWord(word: VocabWord): Promise<boolean> {
+    setIsLoading(true);
     const response = await bookmarkWordService(token, word._id);
     if (response) {
       customToast(response.message);
       return false;
     }
     setBookmarkedWords((prev) => prev.concat(word));
+    setIsLoading(false);
     return true;
   }
   async function removeBookmark(wordId: string): Promise<boolean> {
+    setIsLoading(true);
     const response = await removeBookmarkService(token, wordId);
     if (response) {
       customToast(response.message);
       return false;
     }
     setBookmarkedWords((prev) => prev.filter(({ _id }) => _id !== wordId));
+    setIsLoading(false);
     return true;
   }
 
   return (
     <BookmarkContext.Provider
       value={{
+        isLoading,
         bookmarkedWords,
         bookmarkWord,
         removeBookmark,

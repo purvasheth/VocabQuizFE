@@ -42,6 +42,7 @@ export function Login(): ReactElement {
     setErrors({});
     const isRequiredFailure = validateRequiredFields();
     const isPatternValid = validatePatterns(email, password, setErrors);
+
     if (!isRequiredFailure && isPatternValid) {
       const response = await loginUser(email, password);
       if (typeof response !== 'boolean' && 'errors' in response) {

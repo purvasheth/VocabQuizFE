@@ -11,7 +11,12 @@ type DisplayWordProps = {
 
 export function DisplayWord({ word }: DisplayWordProps): ReactElement {
   const { dispatch } = useQuiz();
-  const { bookmarkWord, bookmarkedWords, removeBookmark } = useBookmark();
+  const {
+    bookmarkWord,
+    bookmarkedWords,
+    removeBookmark,
+    isLoading: disabledButton,
+  } = useBookmark();
 
   const toggleBookmarkedWord = async () => {
     let success = true;
@@ -34,7 +39,11 @@ export function DisplayWord({ word }: DisplayWordProps): ReactElement {
         <Heading as="h3" size="md" pt={1.5} mr={2}>
           {word.word}
         </Heading>
-        <SaveButton isSelected={word.isBookmarked} onClick={toggleBookmarkedWord} />
+        <SaveButton
+          isSelected={word.isBookmarked}
+          onClick={toggleBookmarkedWord}
+          disabled={disabledButton}
+        />
       </Flex>
       {word.details.map(({ type, meaning, sentence, _id }) => (
         <Box mb={4} key={_id}>

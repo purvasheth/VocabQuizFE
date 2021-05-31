@@ -25,11 +25,11 @@ export function validatePatterns(
 ): boolean {
   const isEmailValid = validateEmail(email);
   if (!isEmailValid) {
-    setErrors((prev: FormError) => (prev.email !== '' ? prev : { ...prev, email: EMAIL_ERROR }));
+    setErrors((prev: FormError) => (prev.email && prev.email !== '' ? prev : { ...prev, email: EMAIL_ERROR }));
   }
   const isPasswordValid = validatePassword(password);
   if (!isPasswordValid) {
-    setErrors((prev: FormError) => (prev.password !== ''
+    setErrors((prev: FormError) => (prev.password && prev.password !== ''
       ? prev
       : {
         ...prev,

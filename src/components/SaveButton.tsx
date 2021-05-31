@@ -5,9 +5,10 @@ import { IconButton } from '@chakra-ui/react';
 type SaveButtonProps = {
   isSelected: boolean;
   onClick: () => void;
+  disabled: boolean;
 };
 
-export function SaveButton({ isSelected, onClick }: SaveButtonProps): ReactElement {
+export function SaveButton({ isSelected, onClick, disabled }: SaveButtonProps): ReactElement {
   return isSelected ? (
     <IconButton
       onClick={() => onClick()}
@@ -16,6 +17,7 @@ export function SaveButton({ isSelected, onClick }: SaveButtonProps): ReactEleme
       icon={<BsBookmarkFill />}
       color="orange.500"
       fontSize="1.5rem"
+      disabled={disabled}
     />
   ) : (
     <IconButton
@@ -24,6 +26,7 @@ export function SaveButton({ isSelected, onClick }: SaveButtonProps): ReactEleme
       aria-label="bookmark word"
       icon={<BsBookmark />}
       fontSize="1.5rem"
+      disabled={disabled}
     />
   );
 }
