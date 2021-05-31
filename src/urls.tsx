@@ -1,5 +1,5 @@
 // export const BASE_PATH = "http://localhost:5000";
-export const BASE_PATH = "https://vocab-quiz-backend.herokuapp.com";
+export const BASE_PATH = 'https://vocab-quiz-backend.herokuapp.com';
 export const API_LOGIN = `${BASE_PATH}/login`;
 export const API_SIGNUP = `${BASE_PATH}/signup`;
 export const API_RESET_PASSWORD = `${BASE_PATH}/reset-password`;

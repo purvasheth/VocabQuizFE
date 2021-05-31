@@ -1,98 +1,105 @@
-import React, { createContext, ReactNode, useContext } from "react";
+import React, { createContext, ReactElement, ReactNode, useContext, useState } from 'react';
+import { useToast } from '@chakra-ui/toast';
 import {
   loginService,
   signupService,
   resetPasswordService,
-} from "../services/auth-service/auth-service";
-import { User } from "../services/auth-service/auth-service-types";
-import { useState } from "react";
-import { useToast } from "@chakra-ui/toast";
+} from '../services/auth-service/auth-service';
+import { ServerError, User } from '../services/auth-service/auth-service-types';
+import { Dispatcher } from '../pages/Auth/auth-types';
 
 type AuthContextType = {
   token: string;
-  loginUser: Function;
-  resetPassword: Function;
-  signupUser: Function;
-  logoutUser: Function;
-  setToken: Function;
+  // eslint-disable-next-line no-unused-vars
+  loginUser: (email: string, password: string) => Promise<boolean | ServerError>;
+  // eslint-disable-next-line no-unused-vars
+  resetPassword: (email: string, password: string) => Promise<boolean | ServerError>;
+  // eslint-disable-next-line no-unused-vars
+  signupUser: (user: User) => Promise<boolean | ServerError>;
+  logoutUser: () => void;
+  setToken: Dispatcher<string>;
 };
 
-const AuthContext = createContext<AuthContextType>({
-  token: "",
-  loginUser: () => {},
-  signupUser: () => {},
-  resetPassword: () => {},
-  logoutUser: () => {},
-  setToken: () => {},
-});
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 type AuthProviderProps = {
   children: ReactNode;
 };
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [token, setToken] = useState<string>("");
+export const AuthProvider = ({ children }: AuthProviderProps): ReactElement => {
+  const [token, setToken] = useState<string>('');
   const toast = useToast();
 
-  async function loginUser(email: string, password: string) {
+  async function loginUser(email: string, password: string): Promise<boolean | ServerError> {
     const response = await loginService(email, password);
-    if ("errors" in response) {
+    if ('errors' in response) {
       return { errors: response.errors };
     }
-    if ("token" in response) {
+    if ('token' in response) {
       setToken(response.token);
-      localStorage && localStorage.setItem("token", response.token);
+      if (localStorage) {
+        localStorage.setItem('token', response.token);
+      }
+      return true;
     }
-    if ("message" in response) {
+    if ('message' in response) {
       toast({
-        title: "Error",
+        title: 'Error',
         description: response.message,
-        status: "error",
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });
     }
+    return false;
   }
-  async function resetPassword(email: string, password: string) {
+  async function resetPassword(email: string, password: string): Promise<boolean | ServerError> {
     const response = await resetPasswordService(email, password);
-    if ("errors" in response) {
+    if ('errors' in response) {
       return { errors: response.errors };
     }
-    if (response?.message && response.message === "success") {
-      return response;
+    if (response?.message && response.message === 'success') {
+      return true;
     }
     toast({
-      title: "Error",
+      title: 'Error',
       description: response.message,
-      status: "error",
+      status: 'error',
       duration: 5000,
       isClosable: true,
     });
+    return false;
   }
 
-  async function signupUser(user: User) {
+  async function signupUser(user: User): Promise<boolean | ServerError> {
     const response = await signupService(user);
-    if ("errors" in response) {
+    if ('errors' in response) {
       return { errors: response.errors };
     }
-    if ("token" in response) {
+    if ('token' in response) {
       setToken(response.token);
-      localStorage && localStorage.setItem("token", response.token);
+      if (localStorage) {
+        localStorage.setItem('token', response.token);
+      }
+      return true;
     }
-    if ("message" in response) {
+    if ('message' in response) {
       toast({
-        title: "Error",
+        title: 'Error',
         description: response.message,
-        status: "error",
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });
     }
+    return false;
   }
 
-  function logoutUser() {
-    setToken("");
-    localStorage && localStorage.removeItem("token");
+  function logoutUser(): void {
+    setToken('');
+    if (localStorage) {
+      localStorage.removeItem('token');
+    }
   }
 
   return (
@@ -111,6 +118,4 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = (): AuthContextType => useContext(AuthContext);

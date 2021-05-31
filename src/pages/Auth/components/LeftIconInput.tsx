@@ -1,16 +1,10 @@
-import {
-  Stack,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Text,
-} from "@chakra-ui/react";
-import React, { ReactChild } from "react";
-import { PasswordInputProps } from "./PasswordInput";
+import { Stack, InputGroup, InputLeftElement, Input, Text } from '@chakra-ui/react';
+import React, { ReactChild, ReactElement } from 'react';
+import { PasswordInputProps } from './PasswordInput';
 
 type LeftIconInputProps = PasswordInputProps & {
   icon: ReactChild;
-  type: "text" | "email";
+  type: 'text' | 'email';
 };
 export function LeftIconInput({
   value,
@@ -19,11 +13,11 @@ export function LeftIconInput({
   icon,
   type,
   error,
-}: LeftIconInputProps) {
+}: LeftIconInputProps): ReactElement {
   return (
     <Stack>
       <InputGroup>
-        <InputLeftElement color="gray.400" children={icon} />
+        <InputLeftElement color="gray.400">{icon}</InputLeftElement>
         <Input
           type={type}
           placeholder={placeholder}

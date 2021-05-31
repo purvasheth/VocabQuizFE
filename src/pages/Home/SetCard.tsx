@@ -1,18 +1,18 @@
-import React from "react";
-import { Heading, Button } from "@chakra-ui/react";
-import { Card } from "../../components";
-import { useNavigate } from "react-router-dom";
+import React, { ReactElement } from 'react';
+import { Heading, Button } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { Card } from '../../components';
 
 type SetCardProps = {
   setNumber: number;
 };
 
-export function SetCard({ setNumber }: SetCardProps) {
+export function SetCard({ setNumber }: SetCardProps): ReactElement {
   const navigate = useNavigate();
   return (
     <Card>
       <Heading as="h2" size="lg" textAlign="center" mb={4}>
-        Set {setNumber + 1}
+        {`Set ${setNumber + 1}`}
       </Heading>
       <Button
         colorScheme="blue"

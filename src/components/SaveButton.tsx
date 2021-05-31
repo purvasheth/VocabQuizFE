@@ -1,13 +1,13 @@
-import React from "react";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
-import { IconButton } from "@chakra-ui/react";
+import React, { ReactElement } from 'react';
+import { BsBookmark, BsBookmarkFill } from 'react-icons/bs';
+import { IconButton } from '@chakra-ui/react';
 
 type SaveButtonProps = {
   isSelected: boolean;
-  onClick: Function;
+  onClick: () => void;
 };
 
-export function SaveButton({ isSelected, onClick }: SaveButtonProps) {
+export function SaveButton({ isSelected, onClick }: SaveButtonProps): ReactElement {
   return isSelected ? (
     <IconButton
       onClick={() => onClick()}

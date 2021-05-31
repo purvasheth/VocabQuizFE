@@ -1,16 +1,9 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import { PrivateRoute } from "./components";
-import {
-  Home,
-  List,
-  Quiz,
-  QuizDone,
-  Signup,
-  Login,
-  ResetPassword,
-} from "./pages";
-export default function App() {
+import React, { ReactElement } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { PrivateRoute } from './components';
+import { Home, List, Quiz, QuizDone, Signup, Login, ResetPassword } from './pages';
+
+export default function App(): ReactElement {
   return (
     <div className="App">
       <Routes>

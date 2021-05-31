@@ -18,5 +18,5 @@ export type User = {
 };
 
 export type Success = {
-  message: "success";
+  message: 'success';
 };

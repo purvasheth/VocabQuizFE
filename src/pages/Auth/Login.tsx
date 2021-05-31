@@ -1,38 +1,31 @@
-import { Heading, Stack, Button, Text, Link } from "@chakra-ui/react";
-import { AiOutlineMail } from "react-icons/ai";
-import React, { useEffect, useState } from "react";
-import { MainContainer } from "../../components";
-import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
-import { LeftIconInput, PasswordInput } from "./components/";
-import { REQUIRED } from "./constants";
-import { useAuth } from "../../contexts";
-import { validateTokenService } from "../../services/auth-service/auth-service";
-import { checkField, validatePatterns } from "./auth-utils";
-import { State } from "./auth-types";
+import { Heading, Stack, Button, Text, Link } from '@chakra-ui/react';
+import { AiOutlineMail } from 'react-icons/ai';
+import React, { ReactElement, useEffect, useState } from 'react';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import { MainContainer } from '../../components';
+import { LeftIconInput, PasswordInput } from './components';
+import { useAuth } from '../../contexts';
+import { validateTokenService } from '../../services/auth-service/auth-service';
+import { checkField, validatePatterns } from './auth-utils';
+import { FormError, State } from './auth-types';
 
-const initialErrorState = {
-  email: "",
-  password: "",
-};
-
-export function Login() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+export function Login(): ReactElement {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const { setToken, loginUser } = useAuth();
-  const [errors, setErrors] =
-    useState<typeof initialErrorState>(initialErrorState);
-  const state: State | null | undefined = useLocation().state;
+  const [errors, setErrors] = useState<FormError>({});
+  const { state }: { state: State | null } = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (localStorage) {
-      const storedToken = localStorage.getItem("token");
+      const storedToken = localStorage.getItem('token');
       if (storedToken) {
         (async () => {
           const response = await validateTokenService(storedToken);
-          if (response?.message === "success") {
+          if (response?.message === 'success') {
             setToken(storedToken);
-            navigate("/");
+            navigate('/');
           }
         })();
       }
@@ -40,21 +33,22 @@ export function Login() {
   }, []);
 
   const validateRequiredFields = () => {
-    const emailFailure = checkField("email", email, setErrors);
-    const passwordFailure = checkField("password", password, setErrors);
+    const emailFailure = checkField('email', email, setErrors);
+    const passwordFailure = checkField('password', password, setErrors);
     return emailFailure || passwordFailure;
   };
 
   const handleLogin = async () => {
-    setErrors(initialErrorState);
+    setErrors({});
     const isRequiredFailure = validateRequiredFields();
     const isPatternValid = validatePatterns(email, password, setErrors);
     if (!isRequiredFailure && isPatternValid) {
       const response = await loginUser(email, password);
-      if (response) {
-        "errors" in response && setErrors(response.errors);
+      if (typeof response !== 'boolean' && 'errors' in response) {
+        setErrors(response.errors || {});
       } else {
-        state?.from ? navigate(state.from) : navigate("/");
+        // eslint-disable-next-line no-unused-expressions
+        state?.from ? navigate(state.from) : navigate('/');
       }
     }
   };
@@ -67,20 +61,14 @@ export function Login() {
 
       <Text my={4}>
         Do not have an account?
-        <Link
-          as={RouterLink}
-          color="blue.500"
-          to={{ pathname: "/signup" }}
-          replace
-          ml={2}
-        >
+        <Link as={RouterLink} color="blue.500" to={{ pathname: '/signup' }} replace ml={2}>
           Sign Up
         </Link>
       </Text>
 
       <Stack spacing={4} mt={4} maxW="container.sm" width="100%">
         <LeftIconInput
-          error={errors.email}
+          error={errors.email || ''}
           type="email"
           placeholder="Email*"
           value={email}
@@ -89,18 +77,13 @@ export function Login() {
         />
 
         <PasswordInput
-          error={errors.password}
+          error={errors.password || ''}
           placeholder="Password*"
           value={password}
           setValue={setPassword}
         />
         <Text>
-          <Link
-            as={RouterLink}
-            color="blue.500"
-            to={{ pathname: "/reset-password" }}
-            replace
-          >
+          <Link as={RouterLink} color="blue.500" to={{ pathname: '/reset-password' }} replace>
             Forgot Password?
           </Link>
         </Text>

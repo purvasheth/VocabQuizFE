@@ -1,7 +1,7 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { MainContainer } from "../components";
-import { Heading, Button, Flex, Box } from "@chakra-ui/react";
+import React, { ReactElement } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Heading, Button, Flex } from '@chakra-ui/react';
+import { MainContainer } from '../components';
 
 type State = {
   score?: number;
@@ -10,8 +10,8 @@ type State = {
   from?: string;
 };
 
-export function QuizDone() {
-  const state: State | null | undefined = useLocation().state;
+export function QuizDone(): ReactElement {
+  const { state }: { state: State | null } = useLocation();
   const navigate = useNavigate();
   return (
     <MainContainer>
@@ -19,7 +19,7 @@ export function QuizDone() {
         Quiz over!
       </Heading>
       <Heading as="h2" size="md" m={4}>
-        Score: {state?.score}/{state?.total}
+        {`Score: ${state?.score}/${state?.total}`}
       </Heading>
       {state?.setNumber && (
         <>
@@ -36,9 +36,7 @@ export function QuizDone() {
               colorScheme="blue"
               m={4}
               variant="outline"
-              onClick={() =>
-                navigate(`/list/list${state?.setNumber?.slice(4)}`)
-              }
+              onClick={() => navigate(`/list/list${state?.setNumber?.slice(4)}`)}
             >
               See list for this set
             </Button>
@@ -50,14 +48,12 @@ export function QuizDone() {
           colorScheme="blue"
           m={4}
           variant="outline"
-          onClick={() =>
-            navigate(`/revise-words`, { state: { from: "revise-words" } })
-          }
+          onClick={() => navigate('/revise-words', { state: { from: 'revise-words' } })}
         >
           Keep revising words
         </Button>
       )}
-      <Button colorScheme="blue" m={4} onClick={() => navigate("/")}>
+      <Button colorScheme="blue" m={4} onClick={() => navigate('/')}>
         Practice another set
       </Button>
     </MainContainer>

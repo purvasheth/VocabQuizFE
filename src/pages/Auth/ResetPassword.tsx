@@ -1,72 +1,51 @@
-import {
-  Heading,
-  Stack,
-  Button,
-  Flex,
-  Box,
-  Text,
-  Link,
-  toast,
-  useToast,
-} from "@chakra-ui/react";
-import { AiOutlineMail } from "react-icons/ai";
-import React, { useEffect, useState } from "react";
-import { MainContainer } from "../../components";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { LeftIconInput, PasswordInput } from "./components";
-import { REQUIRED } from "./constants";
-import { useAuth } from "../../contexts";
-import { checkField, checkPasswords, validatePatterns } from "./auth-utils";
-import { FormError } from "./auth-types";
+import { Heading, Stack, Button, Text, Link, useToast } from '@chakra-ui/react';
+import { AiOutlineMail } from 'react-icons/ai';
+import React, { ReactElement, useEffect, useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { MainContainer } from '../../components';
+import { LeftIconInput, PasswordInput } from './components';
+import { useAuth } from '../../contexts';
+import { checkField, checkPasswords, validatePatterns } from './auth-utils';
+import { FormError } from './auth-types';
 
-const initialErrorState = {
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
-
-export function ResetPassword() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
+export function ResetPassword(): ReactElement {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const { resetPassword } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
-  const [errors, setErrors] =
-    useState<typeof initialErrorState>(initialErrorState);
+  const [errors, setErrors] = useState<FormError>({});
 
   useEffect(() => {
     checkPasswords(password, confirmPassword, setErrors);
   }, [confirmPassword, password]);
 
   const validateRequiredFields = () => {
-    const emailFailure = checkField("email", email, setErrors);
-    const passwordFailure = checkField("password", password, setErrors);
-    const confirmPasswordFailure = checkField(
-      "confirmPassword",
-      confirmPassword,
-      setErrors
-    );
+    const emailFailure = checkField('email', email, setErrors);
+    const passwordFailure = checkField('password', password, setErrors);
+    const confirmPasswordFailure = checkField('confirmPassword', confirmPassword, setErrors);
     return emailFailure || passwordFailure || confirmPasswordFailure;
   };
 
   const handleResetPassword = async () => {
-    setErrors(initialErrorState);
+    setErrors({});
     const isRequiredFailure = validateRequiredFields();
     const isPatternValid = validatePatterns(email, password, setErrors);
     if (!isRequiredFailure && isPatternValid) {
       const response = await resetPassword(email, password);
-      if (response?.message === "success") {
+      if (typeof response === 'boolean' && response) {
         toast({
-          title: "Password reset successfully",
-          status: "success",
+          title: 'Password reset successfully',
+          status: 'success',
           duration: 5000,
           isClosable: true,
         });
-        navigate("/login");
+        navigate('/login');
       }
-
-      "errors" in response && setErrors(response.errors);
+      if (typeof response !== 'boolean' && 'errors' in response) {
+        setErrors(response.errors || {});
+      }
     }
   };
 
@@ -77,19 +56,13 @@ export function ResetPassword() {
       </Heading>
       <Text my={4}>
         Do not have an account?
-        <Link
-          as={RouterLink}
-          color="blue.500"
-          to={{ pathname: "/signup" }}
-          replace
-          ml={2}
-        >
+        <Link as={RouterLink} color="blue.500" to={{ pathname: '/signup' }} replace ml={2}>
           Sign Up
         </Link>
       </Text>
       <Stack spacing={4} mt={4} maxW="container.sm" width="100%">
         <LeftIconInput
-          error={errors.email}
+          error={errors.email || ''}
           type="email"
           placeholder="Email*"
           value={email}
@@ -98,13 +71,13 @@ export function ResetPassword() {
         />
 
         <PasswordInput
-          error={errors.password}
+          error={errors.password || ''}
           placeholder="Password*"
           value={password}
           setValue={setPassword}
         />
         <PasswordInput
-          error={errors.confirmPassword}
+          error={errors.confirmPassword || ''}
           placeholder="Confirm Password*"
           value={confirmPassword}
           setValue={setConfirmPassword}

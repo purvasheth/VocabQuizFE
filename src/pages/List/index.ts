@@ -1,1 +1,1 @@
-export { DisplayWord } from "./DisplayWord";
+export { DisplayWord } from './DisplayWord';

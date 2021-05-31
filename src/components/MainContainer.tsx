@@ -1,11 +1,11 @@
-import { Container } from "@chakra-ui/react";
-import React from "react";
+import { Container } from '@chakra-ui/react';
+import React, { ReactElement } from 'react';
 
-type MainConatinerProps = {
+type MainContainerProps = {
   children: React.ReactNode;
 };
 
-export function MainContainer({ children }: MainConatinerProps) {
+export function MainContainer({ children }: MainContainerProps): ReactElement {
   return (
     <Container maxW="container.lg" m="auto" width="80%">
       {children}

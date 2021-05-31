@@ -1,9 +1,9 @@
-import React from "react";
-import { Text, Flex, Button } from "@chakra-ui/react";
-import { useBookmark, useQuiz } from "../../contexts";
-import { VALIDATE_ANSWER } from "../../contexts/quiz-context/quiz-reducer";
+import React, { ReactElement } from 'react';
+import { Text, Flex, Button } from '@chakra-ui/react';
+import { useBookmark, useQuiz } from '../../contexts';
+import { VALIDATE_ANSWER } from '../../contexts/quiz-context/quiz-reducer';
 
-export function DisplayQuestion() {
+export function DisplayQuestion(): ReactElement {
   const { state, dispatch } = useQuiz();
   const { isAnswerSelected, selectedAnswer, words, currentWordIndex } = state;
   const { bookmarkedWords, bookmarkWord, removeBookmark } = useBookmark();
@@ -11,35 +11,34 @@ export function DisplayQuestion() {
     if (isAnswerSelected) {
       switch (index) {
         case words[currentWordIndex].mcq.answer:
-          return "green";
+          return 'green';
         case selectedAnswer:
-          return "red";
+          return 'red';
         default:
-          return "gray";
+          return 'gray';
       }
     }
-    return "gray";
+    return 'gray';
   }
   function setVariant(index: number): string {
     if (isAnswerSelected) {
-      return index === selectedAnswer ||
-        index === words[currentWordIndex].mcq.answer
-        ? "solid"
-        : "outline";
+      return index === selectedAnswer || index === words[currentWordIndex].mcq.answer
+        ? 'solid'
+        : 'outline';
     }
-    return "outline";
+    return 'outline';
   }
 
-  const validateAnswer = (selectedAnswer: number) => {
+  const validateAnswer = async (answer: number) => {
     dispatch({
       type: VALIDATE_ANSWER,
-      payload: { selectedAnswer },
+      payload: { selectedAnswer: answer },
     });
     const word = words[currentWordIndex];
-    if (bookmarkedWords.find(({ _id }) => _id === word._id)) {
-      selectedAnswer === word.mcq.answer && removeBookmark(word._id);
-    } else {
-      selectedAnswer !== word.mcq.answer && bookmarkWord(word);
+    if (bookmarkedWords.find(({ _id }) => _id === word._id) && answer === word.mcq.answer) {
+      await removeBookmark(word._id);
+    } else if (!bookmarkedWords.find(({ _id }) => _id === word._id) && answer !== word.mcq.answer) {
+      await bookmarkWord(word);
     }
   };
 
@@ -47,6 +46,7 @@ export function DisplayQuestion() {
     <Flex direction="column">
       {words[currentWordIndex].mcq.options.map((option, i) => (
         <Button
+          // eslint-disable-next-line react/no-array-index-key
           key={i}
           whiteSpace="normal"
           height="auto"
@@ -56,10 +56,10 @@ export function DisplayQuestion() {
           justifyContent="flex-start"
           onClick={() => validateAnswer(i)}
           disabled={!!isAnswerSelected}
-          _disabled={{ opacity: 1, cursor: "no-drop" }}
+          _disabled={{ opacity: 1, cursor: 'no-drop' }}
           m={2}
         >
-          <Text textAlign="left"> {option} </Text>
+          <Text textAlign="left">{option}</Text>
         </Button>
       ))}
     </Flex>

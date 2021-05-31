@@ -1,16 +1,16 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError } from 'axios';
 import {
   API_LOGIN,
   API_RESET_PASSWORD,
   API_SELF,
   API_SIGNUP,
-} from "../../urls";
-import { Token, ServerError, User, Success } from "./auth-service-types";
-import { authCatchHandler } from "./authCatchHandler";
+} from '../../urls';
+import { Token, ServerError, User, Success } from './auth-service-types';
+import { authCatchHandler } from './authCatchHandler';
 
 export async function loginService(
   email: string,
-  password: string
+  password: string,
 ): Promise<Token | ServerError> {
   try {
     const response = await axios.post<Token>(API_LOGIN, { email, password });
@@ -31,13 +31,13 @@ export async function signupService(user: User): Promise<Token | ServerError> {
         return serverError.response.data;
       }
     }
-    return { message: "something is wrong" };
+    return { message: 'something is wrong' };
   }
 }
 
 export async function resetPasswordService(
   email: string,
-  password: string
+  password: string,
 ): Promise<Success | ServerError> {
   try {
     const response = await axios.post<Success>(API_RESET_PASSWORD, {
@@ -50,7 +50,7 @@ export async function resetPasswordService(
   }
 }
 export async function validateTokenService(
-  token: string
+  token: string,
 ): Promise<Success | ServerError> {
   try {
     const response = await axios.get<Success>(API_SELF, {

@@ -1,31 +1,23 @@
-import React from "react";
-import { createContext, ReactNode, useContext, useReducer } from "react";
-import { initialState, quizReducer, State } from "./quiz-reducer";
+import React, { createContext, ReactElement, ReactNode, useContext, useReducer } from 'react';
+import { initialState, quizReducer, State, Action } from './quiz-reducer';
 
 type QuizContextType = {
   state: State;
-  dispatch: Function;
+  dispatch: React.Dispatch<Action>;
 };
 
 type QuizProviderProps = {
   children: ReactNode;
 };
 
-const QuizContext = createContext<QuizContextType>({
-  state: initialState,
-  dispatch: () => {},
-});
+const QuizContext = createContext<QuizContextType>({} as QuizContextType);
 
-export function QuizProvider({ children }: QuizProviderProps) {
+export function QuizProvider({ children }: QuizProviderProps): ReactElement {
   const [state, dispatch] = useReducer(quizReducer, initialState);
 
-  return (
-    <QuizContext.Provider value={{ state, dispatch }}>
-      {children}
-    </QuizContext.Provider>
-  );
+  return <QuizContext.Provider value={{ state, dispatch }}>{children}</QuizContext.Provider>;
 }
 
-export function useQuiz() {
+export function useQuiz(): QuizContextType {
   return useContext(QuizContext);
 }
